@@ -1,0 +1,59 @@
+﻿@* Views/Home/AddTask.cshtml *@
+@model TaskItem
+
+@{
+    ViewData["Title"] = Model?.TaskItemID == 0 ? "Add Task" : "Edit Task";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="AddTask" method="post">
+    @Html.AntiForgeryToken()
+
+    <!-- Needed for Edit so the POST knows which record -->
+    <input type="hidden" asp-for="TaskItemID" />
+
+    <div class="mb-3">
+        <label asp-for="TaskName" class="form-label"></label>
+        <input asp-for="TaskName" class="form-control" />
+        <span asp-validation-for="TaskName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DueDate" class="form-label"></label>
+        <input asp-for="DueDate" class="form-control" type="date" />
+        <span asp-validation-for="DueDate" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Quadrant" class="form-label"></label>
+        <select asp-for="Quadrant" class="form-select">
+            <option value="">-- Select Quadrant --</option>
+            <option value="1">Quadrant 1</option>
+            <option value="2">Quadrant 2</option>
+            <option value="3">Quadrant 3</option>
+            <option value="4">Quadrant 4</option>
+        </select>
+        <span asp-validation-for="Quadrant" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CategoryID" class="form-label"></label>
+        <select asp-for="CategoryID" class="form-select" asp-items="ViewBag.CategoryList">
+            <option value="">-- Select Category --</option>
+        </select>
+        <span asp-validation-for="CategoryID" class="text-danger"></span>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="IsCompleted" class="form-check-input" />
+        <label asp-for="IsCompleted" class="form-check-label"></label>
+        <span asp-validation-for="IsCompleted" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        @(Model.TaskItemID == 0 ? "Add Task" : "Save Changes")
+    </button>
+
+    <a asp-action="Matrix" class="btn btn-secondary">Cancel</a>
+</form>
