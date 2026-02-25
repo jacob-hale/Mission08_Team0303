@@ -1,0 +1,232 @@
+@using Mission08_Team0303.Models
+@model IEnumerable<TaskItem>
+
+@{
+    ViewData["Title"] = "Task Matrix";
+
+    // Only show tasks not completed
+    var tasks = (Model ?? Enumerable.Empty<TaskItem>())
+        .Where(t => t.IsCompleted == false)
+        .ToList();
+
+    // Split into quadrants
+    var q1 = tasks.Where(t => t.Quadrant == 1).ToList();
+    var q2 = tasks.Where(t => t.Quadrant == 2).ToList();
+    var q3 = tasks.Where(t => t.Quadrant == 3).ToList();
+    var q4 = tasks.Where(t => t.Quadrant == 4).ToList();
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2 class="mb-0">Stephen Covey Task Matrix</h2>
+            <div class="text-muted">Showing tasks not marked completed.</div>
+        </div>
+
+        <a class="btn btn-primary"
+           asp-controller="Home"
+           asp-action="AddTask">
+            + Add Task
+        </a>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Quadrant I -->
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <strong>Quadrant I:</strong> Important / Urgent
+                </div>
+                <div class="card-body">
+                    @if (!q1.Any())
+                    {
+                        <p class="text-muted mb-0">No tasks here.</p>
+                    }
+                    else
+                    {
+                        <div class="list-group">
+                            @foreach (var t in q1)
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="me-3">
+                                            <div class="fw-semibold">@t.TaskName</div>
+                                            <div class="small text-muted">
+                                                Category: @(t.Category?.CategoryName ?? "—")
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex gap-2">
+                                            <a class="btn btn-sm btn-outline-secondary"
+                                               asp-controller="Home"
+                                               asp-action="EditTask"
+                                               asp-route-id="@t.TaskItemId">
+                                                Edit
+                                            </a>
+
+                                            <a class="btn btn-sm btn-outline-danger"
+                                               asp-controller="Home"
+                                               asp-action="DeleteTask"
+                                               asp-route-id="@t.TaskItemId">
+                                                Delete
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Quadrant II -->
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <strong>Quadrant II:</strong> Important / Not Urgent
+                </div>
+                <div class="card-body">
+                    @if (!q2.Any())
+                    {
+                        <p class="text-muted mb-0">No tasks here.</p>
+                    }
+                    else
+                    {
+                        <div class="list-group">
+                            @foreach (var t in q2)
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="me-3">
+                                            <div class="fw-semibold">@t.TaskName</div>
+                                            <div class="small text-muted">
+                                                Category: @(t.Category?.CategoryName ?? "—")
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex gap-2">
+                                            <a class="btn btn-sm btn-outline-secondary"
+                                               asp-controller="Home"
+                                               asp-action="EditTask"
+                                               asp-route-id="@t.TaskItemId">
+                                                Edit
+                                            </a>
+
+                                            <a class="btn btn-sm btn-outline-danger"
+                                               asp-controller="Home"
+                                               asp-action="DeleteTask"
+                                               asp-route-id="@t.TaskItemId">
+                                                Delete
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Quadrant III -->
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <strong>Quadrant III:</strong> Not Important / Urgent
+                </div>
+                <div class="card-body">
+                    @if (!q3.Any())
+                    {
+                        <p class="text-muted mb-0">No tasks here.</p>
+                    }
+                    else
+                    {
+                        <div class="list-group">
+                            @foreach (var t in q3)
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="me-3">
+                                            <div class="fw-semibold">@t.TaskName</div>
+                                            <div class="small text-muted">
+                                                Category: @(t.Category?.CategoryName ?? "—")
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex gap-2">
+                                            <a class="btn btn-sm btn-outline-secondary"
+                                               asp-controller="Home"
+                                               asp-action="EditTask"
+                                               asp-route-id="@t.TaskItemId">
+                                                Edit
+                                            </a>
+
+                                            <a class="btn btn-sm btn-outline-danger"
+                                               asp-controller="Home"
+                                               asp-action="DeleteTask"
+                                               asp-route-id="@t.TaskItemId">
+                                                Delete
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Quadrant IV -->
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <strong>Quadrant IV:</strong> Not Important / Not Urgent
+                </div>
+                <div class="card-body">
+                    @if (!q4.Any())
+                    {
+                        <p class="text-muted mb-0">No tasks here.</p>
+                    }
+                    else
+                    {
+                        <div class="list-group">
+                            @foreach (var t in q4)
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="me-3">
+                                            <div class="fw-semibold">@t.TaskName</div>
+                                            <div class="small text-muted">
+                                                Category: @(t.Category?.CategoryName ?? "—")
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex gap-2">
+                                            <a class="btn btn-sm btn-outline-secondary"
+                                               asp-controller="Home"
+                                               asp-action="EditTask"
+                                               asp-route-id="@t.TaskItemId">
+                                                Edit
+                                            </a>
+
+                                            <a class="btn btn-sm btn-outline-danger"
+                                               asp-controller="Home"
+                                               asp-action="DeleteTask"
+                                               asp-route-id="@t.TaskItemId">
+                                                Delete
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
