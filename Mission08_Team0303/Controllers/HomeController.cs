@@ -1,27 +1,28 @@
 using Microsoft.AspNetCore.Mvc;
 using Mission08_Team0303.Models;
+using Mission08_Team0303.Repositories;
 using System.Diagnostics;
 
 namespace Mission08_Team0303.Controllers
 {
-
-    private TaskContext _context;
-    public HomeController(TaskContext temp)
-    {
-        _context = temp;
-    }
     public class HomeController : Controller
     {
+        private readonly ITaskRepository _taskRepository;
+        public HomeController(ITaskRepository taskRepository)
+        {
+            _taskRepository = taskRepository;
+        }
         public IActionResult Index()
         {
-            return View();
+            var tasks = _taskRepository.GetAllIncompleteTasks();
+            return View(tasks);
         }
 
         // action to get add view
         [HttpGet]
         public IActionResult AddTask()
         {
-            ViewBag.Categories = _context.Categories
+            ViewBag.Categories = _taskRepository.GetAllCategories()
                 .OrderBy(x => x.CategoryName)
                 .ToList();
             return View(new TaskItem());
@@ -33,14 +34,14 @@ namespace Mission08_Team0303.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.TaskItems.Add(task);
-                _context.SaveChanges();
+                _taskRepository.AddTask(task);
+                // save changes?
 
                 return RedirectToAction("Matrix", task);
             }
             else
             {
-                ViewBag.Categories = _context.Categories
+                ViewBag.Categories = _taskRepository.GetAllCategories()
                     .OrderBy(x => x.CategoryName)
                     .ToList();
                 return View(task);
@@ -52,9 +53,7 @@ namespace Mission08_Team0303.Controllers
         [HttpGet]
         public IActionResult Matrix()
         {
-            var taskItems = _context.TaskItems
-                .Include(x => x.Category)
-                .OrderBy(x => x.LastName)
+            var taskItems = _taskRepository.GetAllCategories()
                 .ToList();
 
             return View(taskItems);
@@ -64,9 +63,9 @@ namespace Mission08_Team0303.Controllers
         [HttpGet]
         public IActionResult EditTask(int id)
         {
-            var recordToEdit = _context.TaskItems
-                .Single(x => x.TaskItemId == id);
-            ViewBag.Categories = _context.Categories
+            var recordToEdit = _taskRepository.GetAllIncompleteTasks()
+                .Single(x => x.TaskItemID == id);
+            ViewBag.Categories = _taskRepository.GetAllCategories()
                 .OrderBy(x => x.CategoryName)
                 .ToList();
 
@@ -77,8 +76,8 @@ namespace Mission08_Team0303.Controllers
         [HttpPost]
         public IActionResult EditTask(TaskItem updatedInfo)
         {
-            _context.TaskItems.Update(updatedInfo);
-            _context.SaveChanges();
+            _taskRepository.UpdateTask(updatedInfo);
+            // save changes?
 
             return RedirectToAction("Matrix");
         }
@@ -87,8 +86,8 @@ namespace Mission08_Team0303.Controllers
         [HttpGet]
         public IActionResult DeleteTask(int id)
         {
-            var recordToDelete = _context.TaskItems
-                    .Single(x => x.TaskItemId == id);
+            var recordToDelete = _taskRepository.GetTaskById(id);
+                    //.Single(x => x.TaskItemID == id);
             return View(recordToDelete);
         }
 
@@ -96,8 +95,8 @@ namespace Mission08_Team0303.Controllers
         [HttpPost]
         public IActionResult DeleteTask(TaskItem taskItem)
         {
-            _context.TaskItems.Remove(taskItem);
-            _context.SaveChanges();
+            _taskRepository.DeleteTask(taskItem.TaskItemID);
+                // save changes?
 
             return RedirectToAction("Matrix");
         }
