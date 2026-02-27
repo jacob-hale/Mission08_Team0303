@@ -7,7 +7,7 @@
 
 <h2>@ViewData["Title"]</h2>
 
-<form asp-action="AddTask" method="post">
+<form asp-action="@(Model.TaskItemID == 0 ? "AddTask" : "EditTask")" method="post">
     @Html.AntiForgeryToken()
 
     <!-- Needed for Edit so the POST knows which record -->
@@ -39,10 +39,13 @@
 
     <div class="mb-3">
         <label asp-for="CategoryID" class="form-label"></label>
-        <select asp-for="CategoryID" class="form-select" asp-items="ViewBag.CategoryList">
-            <option value="">-- Select Category --</option>
+        <select asp-for="CategoryID" class="form-control">
+            <option value="">-- Select a Category --</option>
+            @foreach (var c in ViewBag.Categories)
+            {
+                <option value="@c.CategoryID">@c.CategoryName</option>
+            }
         </select>
-        <span asp-validation-for="CategoryID" class="text-danger"></span>
     </div>
 
     <div class="form-check mb-3">
